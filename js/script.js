@@ -29,11 +29,14 @@ const playMusic = (track, pause=false) =>{
     }
 
     document.querySelector('.songinfo').innerText = decodeURI(track);
-    document.querySelector('.songtime').innerText = '00:00/00:00';
+    document.querySelector('.songtime').innerText = '00:00 / 00:00';
 
 }
 
 function convertSeconds(seconds) {
+    if(isNaN(seconds) || seconds<0){
+        return "00:00";
+    }
 
     let minutes = Math.floor(seconds / 60); // Calculate minutes
     let remainingSeconds = Math.floor(seconds % 60);    // Calculate remaining seconds
@@ -73,7 +76,7 @@ async function main(){
         })
     })
 
-    //Attach event listener on play, prev and next
+    //Attach event listener on play
     play.addEventListener('click', ()=>{
 
         if(currentSong.paused){
@@ -101,6 +104,42 @@ async function main(){
 
         currentSong.currentTime = ((currentSong.duration)*percent)/100;;
     })
+
+    //Add an event listener on hamburger
+    document.querySelector('.hamburger').addEventListener('click', ()=>{
+        document.querySelector('.left').style.left = '0';
+    })
+
+    //Add an event listener for close button
+    document.querySelector('.close').addEventListener('click', ()=>{
+        document.querySelector('.left').style.left = '-150%';
+    })
+
+    //Attach event listener on prev
+    prev.addEventListener('click', ()=>{
+
+        let index = songs.indexOf(currentSong.src.split('songs/')[1]);
+        if(index-1 >= 0 ){
+            playMusic(songs[index-1]);
+        }
+    })
+
+    //Attach event listener on next
+    next.addEventListener('click', ()=>{
+
+        let index = songs.indexOf(currentSong.src.split('songs/')[1]);
+        if(index+1 < songs.length ){
+            playMusic(songs[index+1]);
+        }
+    })
+
+    //Add an event to volume 
+    document.querySelector('.range').getElementsByTagName('input')[0].addEventListener('change', (e)=>{
+        currentSong.volume = e.target.value/100;
+    })
+
 }
+
+
 
 main();
